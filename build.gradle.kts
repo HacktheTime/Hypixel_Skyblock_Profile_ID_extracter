@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.accessors.runtime.externalModuleDependencyFor
-
 plugins {
     idea
     java
@@ -23,6 +21,23 @@ dependencies {
     implementation("net.hypixel:hypixel-api-transport-reactor:4.4")
 }
 
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] =
+            "de.hype.bbsentials.profileidfromlogs.Main" // Replace 'com.example.MainKt' with the fully qualified name of your main Kotlin file
+    }
+}
+
+tasks.shadowJar {
+    manifest {
+        attributes["Main-Class"] =
+            "de.hype.bbsentials.profileidfromlogs.Main" // Replace 'com.example.MainKt' with the fully qualified name of your main Kotlin file
+    }
+}
+tasks.withType<JavaCompile> {
+    options.compilerArgs.addAll(listOf("-source", "17", "-target", "17"))
+}
 tasks.test {
     useJUnitPlatform()
 }
+
