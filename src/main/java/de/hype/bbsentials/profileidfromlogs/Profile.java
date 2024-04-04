@@ -49,7 +49,7 @@ public class Profile {
     public int getBingoId() {
         if (creationDate == null)
             return -1;
-        return ((creationDate.get(Calendar.YEAR) - 2022) * 12) + creationDate.get(Calendar.MONTH);
+        return ((creationDate.get(Calendar.YEAR) - 2022) * 12) + (creationDate.get(Calendar.MONTH)+1);
     }
 
     public String getBingoDatingString() {
