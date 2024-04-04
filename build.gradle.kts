@@ -35,7 +35,7 @@ tasks.shadowJar {
     }
 }
 tasks.withType<JavaCompile> {
-    options.compilerArgs.addAll(listOf("-source", "17", "-target", "17"))
+    options.compilerArgs.addAll(listOf("-source", "8", "-target", "8"))
 }
 tasks.test {
     useJUnitPlatform()

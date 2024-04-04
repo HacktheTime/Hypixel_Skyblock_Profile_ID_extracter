@@ -2,22 +2,21 @@ package de.hype.bbsentials.profileidfromlogs;
 
 import com.google.gson.JsonObject;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.Month;
 import java.time.format.TextStyle;
+import java.util.Calendar;
 import java.util.Locale;
 
 public class Profile {
     JsonObject data;
     String profileId;
-    Instant creationDate;
+    Calendar creationDate = Calendar.getInstance();
 
     public Profile(JsonObject data, String profileId) {
         this.data = data;
         this.profileId = profileId;
         try {
-            creationDate = Instant.ofEpochMilli(data.get("created_at").getAsLong());
+            creationDate.setTimeInMillis(data.get("created_at").getAsLong());
         } catch (Exception e) {
             creationDate = null;
         }
@@ -43,21 +42,19 @@ public class Profile {
         return isMember(mcuuid) && isBingoProfile();
     }
 
-    public Instant getCreationDate() {
+    public Calendar getCreationDate() {
         return creationDate;
     }
 
     public int getBingoId() {
         if (creationDate == null)
             return -1;
-        ZonedDateTime time = creationDate.atZone(ZoneId.of("America/Chicago"));
-        return ((time.getYear() - 2022) * 12) + time.getMonthValue();
+        return ((creationDate.get(Calendar.YEAR) - 2022) * 12) + creationDate.get(Calendar.MONTH);
     }
 
     public String getBingoDatingString() {
         if (creationDate == null) return "Unknown Date. Sorry";
-        ZonedDateTime time = creationDate.atZone(ZoneId.of("America/Chicago"));
-        return time.getMonth().getDisplayName(TextStyle.FULL, Locale.US) + " Bingo in " + time.getYear() + " AKA Bingo #" + (getBingoId() + 1) + " → API Bingo ID " + getBingoId();
+        return Month.of(creationDate.get(Calendar.MONTH) + 1).getDisplayName(TextStyle.FULL, Locale.US) + " Bingo in " + creationDate.get(Calendar.YEAR) + " AKA Bingo #" + (getBingoId() + 1) + " → API Bingo ID " + getBingoId();
     }
 
     public String getDisplayString() {

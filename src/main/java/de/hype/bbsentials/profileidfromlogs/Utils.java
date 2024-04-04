@@ -120,31 +120,6 @@ public class Utils{
         else {
             profileIds = new HashSet<>();
         }
-        //TODO implement this
-//        List<Future<Set<String>>> futures = new ArrayList<>();
-//        AtomicInteger activeThreads = new AtomicInteger(10);
-//
-//        for (String filePath : filePaths) {
-//            while (heapMemoryUsage.getMax()*)
-//            Future<Set<String>> future = executorService.submit(() -> {
-//
-//            });
-//            futures.add(future);
-//
-//            // Check queue size and to dynamically adjust thread pool size
-//            if (futures.size() >= QUEUE_THRESHOLD && activeThreads.get() < MAX_THREAD_POOL_SIZE) {
-//                long memoryUsage = calculateMemoryUsage();
-//                if (memoryUsage < MAX_MEMORY_USAGE) {
-//                    int newThreads = Math.min(MAX_THREAD_POOL_SIZE - activeThreads.get(), QUEUE_THRESHOLD);
-////                    executorService.submit(future);
-//                    activeThreads.addAndGet(newThreads);
-//                }
-//            }
-//        }
-//
-//        for (Future<Set<String>> future : futures) {
-//            profileIds.addAll(future.get());
-//        }
         return profileIds;
     }
 
