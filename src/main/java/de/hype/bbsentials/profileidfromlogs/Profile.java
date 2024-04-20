@@ -60,4 +60,8 @@ public class Profile {
     public String getDisplayString() {
         return profileId + " : " + getBingoDatingString();
     }
+
+    public String getProfileId() {
+        return profileId;
+    }
 }

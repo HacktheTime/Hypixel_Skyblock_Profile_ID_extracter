@@ -10,6 +10,7 @@ import java.awt.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static de.hype.bbsentials.profileidfromlogs.Utils.*;
@@ -81,7 +82,17 @@ public class MainGui extends JFrame {
             validProfiles.sort(Comparator.comparingInt(Profile::getBingoId));
             System.out.println("Everything combined took: " + (Instant.now().toEpochMilli() - startingTime.toEpochMilli()) + "ms");
             // Update GUI with final result
-            SwingUtilities.invokeLater(() -> popup.setText("Result: \n" + validProfiles.stream().map(Profile::getDisplayString).collect(Collectors.joining("\n"))));
+            List<String> validProfileIds = validProfiles.stream().map(Profile::getProfileId).toList();
+            AtomicInteger counter = new AtomicInteger(0);
+            popup.setText("Result: \n" + validProfiles.stream().map(Profile::getDisplayString).collect(Collectors.joining("\n")) + "\n DC commands:\n" + validProfiles.stream()
+                    .map(Profile::getProfileId)
+                    .collect(Collectors.groupingBy(id -> counter.getAndIncrement() / 10,
+                            LinkedHashMap::new, Collectors.toList()))
+                    .values().stream()
+                    .map(chunk -> "/import profile_ids profile_ids:" + String.join(";", chunk))
+                    .collect(Collectors.joining("\n")),false);
+//
+
             popup.setClosable(true);
         });
 
@@ -158,4 +169,5 @@ public class MainGui extends JFrame {
     public JComponent $$$getRootComponent$$$() {
         return panel1;
     }
+
 }

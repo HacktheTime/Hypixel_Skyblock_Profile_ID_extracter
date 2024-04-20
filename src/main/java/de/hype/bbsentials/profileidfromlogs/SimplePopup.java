@@ -2,11 +2,10 @@ package de.hype.bbsentials.profileidfromlogs;
 
 import javax.swing.*;
 import java.awt.*;
-import de.hype.bbsentials.profileidfromlogs.MainGui.*;
 
 public class SimplePopup {
     private JFrame frame;
-    private JTextArea label;
+    private JTextArea textArea;
 
     // Constructor
     public SimplePopup(String initialText) {
@@ -16,24 +15,28 @@ public class SimplePopup {
 
         // Create the label with initial text
         System.out.println(initialText);
-        label = new JTextArea(initialText);
-        label.setMargin(new Insets(0, 10, 0, 0));
-        label.setColumns(50);
-        label.setRows(50);
+        textArea = new JTextArea(initialText);
+        textArea.setMargin(new Insets(0, 10, 0, 0));
+        textArea.setColumns(50);
+        textArea.setRows(50);
 
         // Add label to frame
-        frame.getContentPane().add(label);
-        frame.add(label);
+        frame.getContentPane().add(textArea);
+        frame.add(textArea);
         // Set frame size and visibility
         frame.setSize(600, 300);
         frame.setLocationRelativeTo(null); // Center the frame on the screen
         frame.setVisible(true);
     }
 
+    public void setText(String newText){
+        setText(newText,true);
+    }
     // Method to change the text shown in the popup
-    public void setText(String newText) {
+    public void setText(String newText,boolean dontReset) {
         System.out.println(newText);
-        label.append("\n" + newText); // Append the new text
+        if (dontReset)textArea.append("\n" + newText); // Append the new text
+        else textArea.setText(newText);
     }
 
     public void setClosable(boolean closable){
