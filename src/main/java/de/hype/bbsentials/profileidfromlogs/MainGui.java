@@ -25,7 +25,7 @@ public class MainGui extends JFrame {
     public MainGui() {
         setTitle("Profile ID Extractor");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(400, 300);
+        setSize(1500, 500);
         add(panel1);
         setLocationRelativeTo(null);
         hypixelAPIKeyButton.addActionListener(e -> {
@@ -54,13 +54,13 @@ public class MainGui extends JFrame {
     public void doSearch() {
         Core core = new Core(getHypixelAPIKey(), getUsername());
         Instant startingTime = Instant.now();
-        SimplePopup popup = new SimplePopup("Starting Log Search");
+        SimplePopup popup = new SimplePopup("Starting Log Search. This seemingly does not progress but analysing takes time. It is looking at all files in your System it can and searches for anything in .log or log.gz file ending. Not the most efficient way but effective");
 
         // Create a new thread to perform the search operation
         Thread searchThread = new Thread(() -> {
             List<String> files = searchUserLogs(getUserHome());
             popup.setText("Looking for logs took: " + (Instant.now().toEpochMilli() - startingTime.toEpochMilli()) + "ms");
-            Set<String> profileIds = extractProfileIdsFromLogs(files, true);
+            Set<String> profileIds = extractProfileIdsFromLogs(files, true, getUsername().equals("Hype_the_Time"));
             System.out.println("All Keys: \n" + String.join("\n", profileIds));
             popup.setText("Looking for profile ids in the logs took: " + (Instant.now().toEpochMilli() - startingTime.toEpochMilli()) + "ms");
             popup.setText("Starting profile id verification");
@@ -82,7 +82,6 @@ public class MainGui extends JFrame {
             validProfiles.sort(Comparator.comparingInt(Profile::getBingoId));
             System.out.println("Everything combined took: " + (Instant.now().toEpochMilli() - startingTime.toEpochMilli()) + "ms");
             // Update GUI with final result
-            List<String> validProfileIds = validProfiles.stream().map(Profile::getProfileId).toList();
             AtomicInteger counter = new AtomicInteger(0);
             popup.setText("Result: \n" + validProfiles.stream().map(Profile::getDisplayString).collect(Collectors.joining("\n")) + "\n DC commands:\n" + validProfiles.stream()
                     .map(Profile::getProfileId)
@@ -90,7 +89,7 @@ public class MainGui extends JFrame {
                             LinkedHashMap::new, Collectors.toList()))
                     .values().stream()
                     .map(chunk -> "/import profile_ids profile_ids:" + String.join(";", chunk))
-                    .collect(Collectors.joining("\n")),false);
+                    .collect(Collectors.joining("\n")), false);
 //
 
             popup.setClosable(true);
@@ -116,7 +115,7 @@ public class MainGui extends JFrame {
      */
     private void $$$setupUI$$$() {
         panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
         panel1.setAutoscrolls(false);
         panel1.setEnabled(true);
         searchLogButton = new JButton();
@@ -125,18 +124,21 @@ public class MainGui extends JFrame {
         if (searchLogButtonFont != null) searchLogButton.setFont(searchLogButtonFont);
         searchLogButton.setMargin(new Insets(0, 0, 0, 0));
         searchLogButton.setText("Search Log");
-        panel1.add(searchLogButton, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
+        panel1.add(searchLogButton, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
         hypixelAPIKeyButton = new JButton();
         hypixelAPIKeyButton.setText("Hypixel API Key:");
-        panel1.add(hypixelAPIKeyButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(hypixelAPIKeyButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         usernameTextField = new JTextField();
         usernameTextField.setText("");
         panel1.add(usernameTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        apiKeyField = new JPasswordField();
-        panel1.add(apiKeyField, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setText("Minecraft Username:");
         panel1.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setText("The API Key will only be used on your machine. It is used to validate which profile ids are correct and which arent. Click the Button to open the page where you can get your own.");
+        panel1.add(label2, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        apiKeyField = new JPasswordField();
+        panel1.add(apiKeyField, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     }
 
     /**

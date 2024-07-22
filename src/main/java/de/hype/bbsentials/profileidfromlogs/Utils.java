@@ -61,7 +61,7 @@ public class Utils{
         }
     }
 
-    private static Set<String> getIdsFromFile(String filePath) {
+    private static Set<String> getIdsFromFile(String filePath, boolean printErrors) {
         Set<String> ids = new HashSet<>();
         if (filePath.endsWith(".log.gz")) {
             try (FileInputStream fileInputStream = new FileInputStream(filePath);
@@ -78,7 +78,8 @@ public class Utils{
                 if (ids.isEmpty()) return ids;
                 System.out.println("File complete: " + filePath + " | Keys: " + String.join(";", ids));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println(filePath +" caused error: ");
+                if (printErrors) e.printStackTrace();
             }
         }
         else {
@@ -111,11 +112,11 @@ public class Utils{
         return null;
     }
 
-    public static Set<String> extractProfileIdsFromLogs(java.util.List<String> filePaths, boolean parallel) {
+    public static Set<String> extractProfileIdsFromLogs(java.util.List<String> filePaths, boolean parallel, boolean printErrors) {
         Set<String> profileIds;
         if (parallel) {
             profileIds = Collections.synchronizedSet(new HashSet<>());
-            filePaths.parallelStream().forEach(path -> profileIds.addAll(getIdsFromFile(path)));
+            filePaths.parallelStream().forEach(path -> profileIds.addAll(getIdsFromFile(path,printErrors)));
         }
         else {
             profileIds = new HashSet<>();
